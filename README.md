@@ -2,7 +2,7 @@
 
 ## System Overview
 
-This system converts handwritten musical notation from scanned PDFs into clean, digital sheet music. The core challenge is resolving ambiguity in handwritten symbols—determining whether a smudged mark is a quarter note or half note, distinguishing a sharp from a natural, or identifying note positions on staff lines. The system uses AI techniques to interpret ambiguous symbols, validate musical correctness, and produce polished output. This theme naturally engages multiple AI approaches: search algorithms explore interpretation possibilities, constraint satisfaction ensures musical validity, and logical reasoning validates rule compliance. The problem domain requires handling uncertainty, making decisions under ambiguity, and ensuring output correctness—all central AI challenges.
+This system converts handwritten musical notation from scanned PDFs into clean, digital sheet music. The core challenge is resolving ambiguity in handwritten symbols—determining whether a smudged mark is a quarter note or half note, distinguishing a sharp from a natural, or identifying note positions on staff lines. The system uses AI techniques to interpret ambiguous symbols, validate musical correctness, and produce polished output. This theme naturally engages multiple AI approaches: search algorithms explore interpretation possibilities, propositional logic encodes and validates musical rules, and logical reasoning ensures rule compliance. The problem domain requires handling uncertainty, making decisions under ambiguity, and ensuring output correctness—all central AI challenges.
 
 ## Modules
 
@@ -50,29 +50,29 @@ This system converts handwritten musical notation from scanned PDFs into clean, 
 
 ### Module 4: Time Signature Detection and Validation
 
-**Topics:** Constraint Satisfaction
+**Topics:** Propositional Logic
 
 **Input:** Interpreted symbol sequence JSON from Module 3, including detected time signature indicators (if visible in the image)
 
-**Output:** JSON object with: time signature for each measure (e.g., {"measure_1": "4/4", "measure_2": "4/4"}), list of measures where note durations don't sum to the time signature (constraint violations), and suggested corrections
+**Output:** JSON object with: time signature for each measure (e.g., {"measure_1": "4/4", "measure_2": "4/4"}), list of measures where note durations don't sum to the time signature (logical violations), and suggested corrections
 
-**Integration:** Uses Module 3's interpreted symbols to determine and validate time signatures. Constraint satisfaction ensures each measure's note durations match its time signature. Output informs Module 5's validation checks.
+**Integration:** Uses Module 3's interpreted symbols to determine and validate time signatures. Propositional logic encodes rules like "if time signature is 4/4, then measure duration must equal 4 beats" and validates each measure against these rules. Output informs Module 5's validation checks.
 
-**Prerequisites:** Module 3, Constraint Satisfaction
+**Prerequisites:** Module 3, Propositional Logic
 
 ---
 
 ### Module 5: Musical Validity Validation
 
-**Topics:** Constraint Satisfaction
+**Topics:** Propositional Logic
 
-**Input:** Interpreted symbols JSON from Module 3, time signatures and constraint violations from Module 4
+**Input:** Interpreted symbols JSON from Module 3, time signatures and logical violations from Module 4
 
-**Output:** Final validated musical notation JSON with: error flags for remaining constraint violations (e.g., invalid accidentals, measure completeness issues), corrected symbol interpretations where constraints suggest fixes, and validation report
+**Output:** Final validated musical notation JSON with: error flags for remaining logical violations (e.g., invalid accidentals, measure completeness issues), corrected symbol interpretations where logical rules suggest fixes, and validation report
 
-**Integration:** Final validation step before output generation. Uses constraint satisfaction to ensure musical correctness of Module 3's interpretations, cross-referencing with Module 4's time signature information.
+**Integration:** Final validation step before output generation. Uses propositional logic to encode and validate musical rules (e.g., "if key signature has F#, then all F notes are sharp unless overridden by accidentals"). Ensures musical correctness of Module 3's interpretations, cross-referencing with Module 4's time signature information.
 
-**Prerequisites:** Module 3, Module 4, Constraint Satisfaction
+**Prerequisites:** Module 3, Module 4, Propositional Logic
 
 ---
 
@@ -94,23 +94,21 @@ This system converts handwritten musical notation from scanned PDFs into clean, 
 
 _A timeline showing that each module's prerequisites align with the course schedule. Verify that you are not planning to implement content before it is taught._
 
-_Note: Fill in the "Topic Covered By" and "Checkpoint Due" columns using the course schedule from https://csc-343.path.app/resources/course.schedule.md_
-
 | Module | Required Topic(s) | Topic Covered By | Checkpoint Due |
 | ------ | ----------------- | ---------------- | -------------- |
-| 1      | Basic image processing | Early in course | Checkpoint 1 |
-| 2      | Basic pattern recognition | Early in course | Checkpoint 1 |
-| 3      | Search (Beam Search, A*) | _[Fill in from schedule]_ | Checkpoint 2 |
-| 4      | Constraint Satisfaction | _[Fill in from schedule]_ | Checkpoint 3 |
-| 5      | Constraint Satisfaction | _[Fill in from schedule]_ | Checkpoint 4 |
+| 1      | Basic image processing | No course topic required (preprocessing) | Checkpoint 1 |
+| 2      | Basic pattern recognition | No course topic required (preprocessing) | Checkpoint 1 |
+| 3      | Search (Beam Search, A*) | Weeks 1.5-3 | Checkpoint 2 |
+| 4      | Propositional Logic | Weeks 1-1.5 | Checkpoint 3 |
+| 5      | Propositional Logic | Weeks 1-1.5 (reuses from Module 4) | Checkpoint 4 |
 | 6      | Basic output formatting | No AI topic required | Checkpoint 5 (optional) |
 
 ## Coverage Rationale
 
 The chosen topics align naturally with the core challenges of handwritten music recognition. **Search algorithms (Beam Search, A*)** are essential for resolving ambiguity—when a handwritten symbol could be multiple things, search explores interpretation sequences to find the most likely overall reading. This directly addresses the system's primary AI challenge: making decisions under uncertainty.
 
-**Constraint Satisfaction** appears in two modules because music notation has strict rules that must be satisfied: measures must sum to their time signature, accidentals follow specific scoping rules, and note sequences must be musically valid. These are natural constraint satisfaction problems where we validate that all musical rules are satisfied.
+**Propositional Logic** appears in two modules because music notation has strict rules that can be encoded as logical statements: "if time signature is 4/4, then measure duration must equal 4 beats," "if key signature has F#, then all F notes are sharp unless overridden," etc. These logical rules can be validated using inference methods, making propositional logic a natural fit for musical validation.
 
 Modules 1 and 2 use basic preprocessing techniques rather than advanced AI topics because the core AI challenge lies in interpretation and validation, not in low-level image processing. This keeps the focus on meaningful AI applications while ensuring a complete, working system.
 
-The trade-off is that we're not using some course topics (e.g., Game Theory, Reinforcement Learning) that don't naturally fit this domain. However, the selected topics—Search and Constraint Satisfaction—are deeply integrated into the problem and provide substantial, non-trivial AI challenges.
+The trade-off is that we're not using some course topics (e.g., Game Theory, Reinforcement Learning) that don't naturally fit this domain. However, the selected topics—Search and Propositional Logic—are deeply integrated into the problem and provide substantial, non-trivial AI challenges. Both topics are covered early in the course (weeks 1-3), ensuring feasibility across all checkpoints.
