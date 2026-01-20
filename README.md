@@ -8,11 +8,11 @@ This system converts handwritten musical notation from scanned PDFs into clean, 
 
 ### Module 1: Image Preprocessing and Staff Detection
 
-**Topics:** _[To be determined - could be basic image processing or Constraint Satisfaction for staff line detection]_
+**Topics:** Basic image processing (foundational preprocessing)
 
 **Input:** PDF file containing scanned handwritten music notation
 
-**Output:** Preprocessed image with detected staff lines, including coordinates of each staff line and measure boundaries
+**Output:** Preprocessed image (grayscale, noise-reduced) with JSON file containing: array of staff line coordinates (y-positions for each of 5 lines per staff), measure boundary x-coordinates, and page dimensions
 
 **Integration:** Provides structured image data to Module 2 for symbol detection. Staff line positions are critical for determining note pitches in later modules.
 
@@ -22,11 +22,11 @@ This system converts handwritten musical notation from scanned PDFs into clean, 
 
 ### Module 2: Symbol Detection and Initial Classification
 
-**Topics:** _[To be determined - could involve pattern recognition or basic classification]_
+**Topics:** Basic pattern recognition (foundational preprocessing)
 
-**Input:** Preprocessed image with staff line coordinates from Module 1
+**Input:** Preprocessed image and staff line coordinates JSON from Module 1
 
-**Output:** List of detected symbol regions, each with: bounding box coordinates, initial classification candidates (e.g., "quarter note (confidence: 0.7), half note (confidence: 0.3)"), and position relative to staff lines
+**Output:** JSON array of symbol objects, each containing: bounding box (x, y, width, height), list of classification candidates with confidence scores (e.g., [{"type": "quarter_note", "confidence": 0.7}, {"type": "half_note", "confidence": 0.3}]), and staff line position (which line/space the symbol occupies)
 
 **Integration:** Provides ambiguous symbol candidates to Module 3, which will resolve the ambiguity using search algorithms.
 
@@ -38,9 +38,9 @@ This system converts handwritten musical notation from scanned PDFs into clean, 
 
 **Topics:** Search (Beam Search, A*)
 
-**Input:** List of ambiguous symbol candidates from Module 2, where each symbol has multiple possible interpretations with confidence scores
+**Input:** JSON array of ambiguous symbol candidates from Module 2, where each symbol has multiple possible interpretations with confidence scores
 
-**Output:** Single best interpretation sequence for all symbols, where each symbol is assigned a definitive classification (e.g., "quarter note on E line") with overall sequence score
+**Output:** JSON object containing: definitive classification for each symbol (e.g., {"symbol_id": 5, "type": "quarter_note", "pitch": "E4", "duration": 1}), overall sequence score, and search path taken (for debugging)
 
 **Integration:** Resolves ambiguity from Module 2's initial classifications. Output feeds into Module 4 for time signature validation and Module 5 for final validation.
 
@@ -50,41 +50,41 @@ This system converts handwritten musical notation from scanned PDFs into clean, 
 
 ### Module 4: Time Signature Detection and Validation
 
-**Topics:** _[To be determined - could use Constraint Satisfaction or Propositional Logic]_
+**Topics:** Constraint Satisfaction
 
-**Input:** Interpreted symbol sequence from Module 3, including detected time signature indicators (if visible)
+**Input:** Interpreted symbol sequence JSON from Module 3, including detected time signature indicators (if visible in the image)
 
-**Output:** Validated time signature for each measure (e.g., "4/4", "3/4") and list of measures that don't match their time signature (for error reporting)
+**Output:** JSON object with: time signature for each measure (e.g., {"measure_1": "4/4", "measure_2": "4/4"}), list of measures where note durations don't sum to the time signature (constraint violations), and suggested corrections
 
-**Integration:** Uses Module 3's interpreted symbols to determine and validate time signatures. Output informs Module 5's validation checks.
+**Integration:** Uses Module 3's interpreted symbols to determine and validate time signatures. Constraint satisfaction ensures each measure's note durations match its time signature. Output informs Module 5's validation checks.
 
-**Prerequisites:** Module 3, [topic to be determined]
+**Prerequisites:** Module 3, Constraint Satisfaction
 
 ---
 
 ### Module 5: Musical Validity Validation
 
-**Topics:** Constraint Satisfaction or Propositional Logic
+**Topics:** Constraint Satisfaction
 
-**Input:** Fully interpreted symbols from Module 3, time signatures from Module 4
+**Input:** Interpreted symbols JSON from Module 3, time signatures and constraint violations from Module 4
 
-**Output:** Validated musical notation with error flags for measures that violate constraints (e.g., measure duration doesn't match time signature, invalid note sequences)
+**Output:** Final validated musical notation JSON with: error flags for remaining constraint violations (e.g., invalid accidentals, measure completeness issues), corrected symbol interpretations where constraints suggest fixes, and validation report
 
-**Integration:** Final validation step before output generation. Ensures musical correctness of Module 3's interpretations using Module 4's time signature information.
+**Integration:** Final validation step before output generation. Uses constraint satisfaction to ensure musical correctness of Module 3's interpretations, cross-referencing with Module 4's time signature information.
 
-**Prerequisites:** Module 3, Module 4, Constraint Satisfaction or Propositional Logic
+**Prerequisites:** Module 3, Module 4, Constraint Satisfaction
 
 ---
 
 ### Module 6: Digital Sheet Music Generation _(optional)_
 
-**Topics:** _[To be determined - could be Planning for layout optimization, or basic output formatting]_
+**Topics:** Basic output formatting (no AI topic required - optional module)
 
-**Input:** Validated musical notation from Module 5
+**Input:** Validated musical notation JSON from Module 5
 
-**Output:** Clean digital sheet music in specified format (e.g., MusicXML, LilyPond, or cleaned image)
+**Output:** Clean digital sheet music file in specified format (e.g., MusicXML, LilyPond format, or rendered PNG image of clean notation)
 
-**Integration:** Final output stage. Takes validated notation and formats it into the desired output format.
+**Integration:** Final output stage. Takes validated notation and formats it into the desired output format for use in music notation software or as a cleaned image.
 
 **Prerequisites:** Module 5
 
@@ -94,15 +94,23 @@ This system converts handwritten musical notation from scanned PDFs into clean, 
 
 _A timeline showing that each module's prerequisites align with the course schedule. Verify that you are not planning to implement content before it is taught._
 
+_Note: Fill in the "Topic Covered By" and "Checkpoint Due" columns using the course schedule from https://csc-343.path.app/resources/course.schedule.md_
+
 | Module | Required Topic(s) | Topic Covered By | Checkpoint Due |
 | ------ | ----------------- | ---------------- | -------------- |
-| 1      |                   |                  |                |
-| 2      |                   |                  |                |
-| 3      |                   |                  |                |
-| 4      |                   |                  |                |
-| 5      |                   |                  |                |
-| 6      |                   |                  |                |
+| 1      | Basic image processing | Early in course | Checkpoint 1 |
+| 2      | Basic pattern recognition | Early in course | Checkpoint 1 |
+| 3      | Search (Beam Search, A*) | _[Fill in from schedule]_ | Checkpoint 2 |
+| 4      | Constraint Satisfaction | _[Fill in from schedule]_ | Checkpoint 3 |
+| 5      | Constraint Satisfaction | _[Fill in from schedule]_ | Checkpoint 4 |
+| 6      | Basic output formatting | No AI topic required | Checkpoint 5 (optional) |
 
 ## Coverage Rationale
 
-_Brief justification for your choice of topics. Why do these topics fit your theme? What trade-offs did you consider?_
+The chosen topics align naturally with the core challenges of handwritten music recognition. **Search algorithms (Beam Search, A*)** are essential for resolving ambiguity—when a handwritten symbol could be multiple things, search explores interpretation sequences to find the most likely overall reading. This directly addresses the system's primary AI challenge: making decisions under uncertainty.
+
+**Constraint Satisfaction** appears in two modules because music notation has strict rules that must be satisfied: measures must sum to their time signature, accidentals follow specific scoping rules, and note sequences must be musically valid. These are natural constraint satisfaction problems where we validate that all musical rules are satisfied.
+
+Modules 1 and 2 use basic preprocessing techniques rather than advanced AI topics because the core AI challenge lies in interpretation and validation, not in low-level image processing. This keeps the focus on meaningful AI applications while ensuring a complete, working system.
+
+The trade-off is that we're not using some course topics (e.g., Game Theory, Reinforcement Learning) that don't naturally fit this domain. However, the selected topics—Search and Constraint Satisfaction—are deeply integrated into the problem and provide substantial, non-trivial AI challenges.
