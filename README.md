@@ -1,92 +1,92 @@
-# [Your System Title]
+# Handwritten Music Recognition System
 
 ## System Overview
 
-_A concise description (250 words max) of what your complete system will do and why the chosen theme is appropriate for exploring AI concepts._
+This system converts handwritten musical notation from scanned PDFs into clean, digital sheet music. The core challenge is resolving ambiguity in handwritten symbols—determining whether a smudged mark is a quarter note or half note, distinguishing a sharp from a natural, or identifying note positions on staff lines. The system uses AI techniques to interpret ambiguous symbols, validate musical correctness, and produce polished output. This theme naturally engages multiple AI approaches: search algorithms explore interpretation possibilities, constraint satisfaction ensures musical validity, and logical reasoning validates rule compliance. The problem domain requires handling uncertainty, making decisions under ambiguity, and ensuring output correctness—all central AI challenges.
 
 ## Modules
 
-### Module 1: [Title]
+### Module 1: Image Preprocessing and Staff Detection
 
-**Topics:** _Course topic(s) covered_
+**Topics:** _[To be determined - could be basic image processing or Constraint Satisfaction for staff line detection]_
 
-**Input:** _Clear specification of what this module receives_
+**Input:** PDF file containing scanned handwritten music notation
 
-**Output:** _Clear specification of what this module produces_
+**Output:** Preprocessed image with detected staff lines, including coordinates of each staff line and measure boundaries
 
-**Integration:** _How this module connects to the larger system_
+**Integration:** Provides structured image data to Module 2 for symbol detection. Staff line positions are critical for determining note pitches in later modules.
 
-**Prerequisites:** _Prior modules or course content required_
-
----
-
-### Module 2: [Title]
-
-**Topics:** _Course topic(s) covered_
-
-**Input:** _Clear specification of what this module receives_
-
-**Output:** _Clear specification of what this module produces_
-
-**Integration:** _How this module connects to the larger system_
-
-**Prerequisites:** _Prior modules or course content required_
+**Prerequisites:** Basic image processing concepts
 
 ---
 
-### Module 3: [Title]
+### Module 2: Symbol Detection and Initial Classification
 
-**Topics:** _Course topic(s) covered_
+**Topics:** _[To be determined - could involve pattern recognition or basic classification]_
 
-**Input:** _Clear specification of what this module receives_
+**Input:** Preprocessed image with staff line coordinates from Module 1
 
-**Output:** _Clear specification of what this module produces_
+**Output:** List of detected symbol regions, each with: bounding box coordinates, initial classification candidates (e.g., "quarter note (confidence: 0.7), half note (confidence: 0.3)"), and position relative to staff lines
 
-**Integration:** _How this module connects to the larger system_
+**Integration:** Provides ambiguous symbol candidates to Module 3, which will resolve the ambiguity using search algorithms.
 
-**Prerequisites:** _Prior modules or course content required_
-
----
-
-### Module 4: [Title]
-
-**Topics:** _Course topic(s) covered_
-
-**Input:** _Clear specification of what this module receives_
-
-**Output:** _Clear specification of what this module produces_
-
-**Integration:** _How this module connects to the larger system_
-
-**Prerequisites:** _Prior modules or course content required_
+**Prerequisites:** Module 1, basic pattern recognition concepts
 
 ---
 
-### Module 5: [Title]
+### Module 3: Ambiguous Symbol Interpretation Using Search
 
-**Topics:** _Course topic(s) covered_
+**Topics:** Search (Beam Search, A*)
 
-**Input:** _Clear specification of what this module receives_
+**Input:** List of ambiguous symbol candidates from Module 2, where each symbol has multiple possible interpretations with confidence scores
 
-**Output:** _Clear specification of what this module produces_
+**Output:** Single best interpretation sequence for all symbols, where each symbol is assigned a definitive classification (e.g., "quarter note on E line") with overall sequence score
 
-**Integration:** _How this module connects to the larger system_
+**Integration:** Resolves ambiguity from Module 2's initial classifications. Output feeds into Module 4 for time signature validation and Module 5 for final validation.
 
-**Prerequisites:** _Prior modules or course content required_
+**Prerequisites:** Module 2, Search algorithms (Beam Search, A*)
 
 ---
 
-### Module 6: [Title] _(optional)_
+### Module 4: Time Signature Detection and Validation
 
-**Topics:** _Course topic(s) covered_
+**Topics:** _[To be determined - could use Constraint Satisfaction or Propositional Logic]_
 
-**Input:** _Clear specification of what this module receives_
+**Input:** Interpreted symbol sequence from Module 3, including detected time signature indicators (if visible)
 
-**Output:** _Clear specification of what this module produces_
+**Output:** Validated time signature for each measure (e.g., "4/4", "3/4") and list of measures that don't match their time signature (for error reporting)
 
-**Integration:** _How this module connects to the larger system_
+**Integration:** Uses Module 3's interpreted symbols to determine and validate time signatures. Output informs Module 5's validation checks.
 
-**Prerequisites:** _Prior modules or course content required_
+**Prerequisites:** Module 3, [topic to be determined]
+
+---
+
+### Module 5: Musical Validity Validation
+
+**Topics:** Constraint Satisfaction or Propositional Logic
+
+**Input:** Fully interpreted symbols from Module 3, time signatures from Module 4
+
+**Output:** Validated musical notation with error flags for measures that violate constraints (e.g., measure duration doesn't match time signature, invalid note sequences)
+
+**Integration:** Final validation step before output generation. Ensures musical correctness of Module 3's interpretations using Module 4's time signature information.
+
+**Prerequisites:** Module 3, Module 4, Constraint Satisfaction or Propositional Logic
+
+---
+
+### Module 6: Digital Sheet Music Generation _(optional)_
+
+**Topics:** _[To be determined - could be Planning for layout optimization, or basic output formatting]_
+
+**Input:** Validated musical notation from Module 5
+
+**Output:** Clean digital sheet music in specified format (e.g., MusicXML, LilyPond, or cleaned image)
+
+**Integration:** Final output stage. Takes validated notation and formats it into the desired output format.
+
+**Prerequisites:** Module 5
 
 ---
 
